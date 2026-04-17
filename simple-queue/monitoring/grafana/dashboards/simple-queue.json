@@ -1,0 +1,241 @@
+{
+  "uid": "simple-queue",
+  "title": "Simple Queue",
+  "tags": ["sqs"],
+  "timezone": "browser",
+  "refresh": "5s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Tamanho da Fila",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sqs_queue_size",
+          "legendFormat": "Queue Size",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "spanNulls": true
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "In-Flight",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "targets": [
+        {
+          "expr": "sqs_inflight_size",
+          "legendFormat": "In-Flight",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "spanNulls": true
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "DLQ Size",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "targets": [
+        {
+          "expr": "sqs_dlq_size",
+          "legendFormat": "DLQ Size",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "red", "mode": "fixed" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "spanNulls": true
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Taxa de Enqueue / Dequeue (por segundo)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(sqs_enqueue_total[1m])",
+          "legendFormat": "Enqueue/s",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(sqs_dequeue_total[1m])",
+          "legendFormat": "Dequeue/s",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "unit": "ops"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Taxa de Ack / Requeue / DLQ (por segundo)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(sqs_ack_total[1m])",
+          "legendFormat": "Ack/s",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(sqs_requeue_total[1m])",
+          "legendFormat": "Requeue/s",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(sqs_dlq_total[1m])",
+          "legendFormat": "DLQ/s",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "unit": "ops"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "Totais Acumulados",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "sqs_enqueue_total",
+          "legendFormat": "Enqueue",
+          "refId": "A"
+        },
+        {
+          "expr": "sqs_dequeue_total",
+          "legendFormat": "Dequeue",
+          "refId": "B"
+        },
+        {
+          "expr": "sqs_ack_total",
+          "legendFormat": "Ack",
+          "refId": "C"
+        },
+        {
+          "expr": "sqs_requeue_total",
+          "legendFormat": "Requeue",
+          "refId": "D"
+        },
+        {
+          "expr": "sqs_dlq_total",
+          "legendFormat": "DLQ",
+          "refId": "E"
+        },
+        {
+          "expr": "sqs_error_total",
+          "legendFormat": "Errors",
+          "refId": "F"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"]
+        },
+        "colorMode": "background",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 7,
+      "title": "Mensagens por Shard",
+      "type": "bargauge",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 22 },
+      "targets": [
+        {
+          "expr": "sqs_shard_size",
+          "legendFormat": "Shard {{shard}}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"]
+        },
+        "orientation": "horizontal",
+        "displayMode": "gradient"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "continuous-blues" },
+          "min": 0
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "Taxa de Erros (por segundo)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 30 },
+      "targets": [
+        {
+          "expr": "rate(sqs_error_total[1m])",
+          "legendFormat": "Errors/s",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "red", "mode": "fixed" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "spanNulls": true
+          },
+          "unit": "ops"
+        }
+      }
+    }
+  ],
+  "schemaVersion": 39
+}
